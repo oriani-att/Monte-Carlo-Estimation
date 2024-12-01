@@ -7,7 +7,6 @@ Created on Fri Oct 11 16:52:54 2024
 """
 
 import random
-import os
 import time
 import multiprocessing
 
