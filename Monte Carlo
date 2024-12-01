@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Oct 11 16:52:54 2024
+
+@author: ensai
+"""
+
+import random
+import os
+import time
+import multiprocessing
+
+# Function to calculate points inside the unit circle for a given number of points
+def monte_carlo_pi_part(n):
+    count = 0
+    for i in range(n):
+        x = random.random()
+        y = random.random()
+        if x*x + y*y <= 1:
+            count += 1
+    return count
+
+if __name__ == '__main__':
+    # Total number of points
+    n = 100000000
+    
+    # Number of available cores on the machine
+    num_cores = multiprocessing.cpu_count()
+    print(f"Using {num_cores} cores.")
+    
+    # Divide the workload among the processes
+    points_per_process = n // num_cores
+    
+    # Create a pool of processes
+    pool = multiprocessing.Pool(num_cores)
+    
+    # Start processes: each process will execute monte_carlo_pi_part on a subset of points
+    start_time = time.perf_counter()
+    results = pool.map(monte_carlo_pi_part, [points_per_process] * num_cores)
+    
+    # Sum up the results
+    total_count = sum(results)
+    
+    # Estimate the value of Pi
+    pi_estimate = (total_count / (n * 1.0)) * 4
+    end_time = time.perf_counter()
+    
+    print(f"Total number of points in the circle: {total_count}")
+    print(f"Estimated value of Pi: {pi_estimate}")
+    print(f"Time taken: {round(end_time - start_time, 2)} seconds")
